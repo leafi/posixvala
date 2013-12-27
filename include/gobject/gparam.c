@@ -30,6 +30,10 @@
 #include "gvaluecollector.h"
 //#include "gtype-private.h"
 
+#define G_CSET_A_2_Z        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+#define G_CSET_a_2_z        "abcdefghijklmnopqrstuvwxyz"
+#define G_CSET_DIGITS        "0123456789"
+
 /**
  * SECTION:gparamspec
  * @short_description: Metadata for parameter specifications

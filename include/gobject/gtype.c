@@ -38,6 +38,8 @@
 
 #define G_N_ELEMENTS(arr)		(sizeof (arr) / sizeof ((arr)[0]))
 
+#define G_MAXUINT16 65535
+
 
 /**
  * SECTION:gtype
@@ -1343,15 +1345,14 @@ iface_node_set_offset_L (TypeNode *iface_node,
   int i;
 
   old_offsets = G_ATOMIC_ARRAY_GET_LOCKED (&iface_node->_prot.offsets, guint8);
-  if (old_offsets == NULL)
+  if (old_offsets == NULL) {
     old_size = 0;
-  else
-    {
-      old_size = G_ATOMIC_ARRAY_DATA_SIZE (old_offsets);
-      if (offset < old_size &&
-	  old_offsets[offset] == index + 1)
-	return; /* Already set to this index, return */
+  } else {
+    old_size = G_ATOMIC_ARRAY_DATA_SIZE (old_offsets);
+    if (offset < old_size && old_offsets[offset] == index + 1) {
+      return; /* Already set to this index, return */
     }
+  }
   new_size = MAX (old_size, offset + 1);
 
   offsets = _g_atomic_array_copy (&iface_node->_prot.offsets,
@@ -1387,29 +1388,28 @@ type_node_add_iface_entry_W (TypeNode   *node,
       g_assert (num_entries < MAX_N_INTERFACES);
 
       for (i = 0; i < num_entries; i++)
-	{
-	  entry = &entries->entry[i];
-	  if (entry->iface_type == iface_type)
-	    {
-	      /* this can happen in two cases:
-	       * - our parent type already conformed to iface_type and node
-	       *   got its own holder info. here, our children already have
-	       *   entries and NULL vtables, since this will only work for
-	       *   uninitialized classes.
-	       * - an interface type is added to an ancestor after it was
-	       *   added to a child type.
-	       */
-	      if (!parent_entry)
-		g_assert (entry->vtable == NULL && entry->init_state == UNINITIALIZED);
-	      else
-		{
-		  /* sick, interface is added to ancestor *after* child type;
-		   * nothing todo, the entry and our children were already setup correctly
-		   */
-		}
-	      return;
-	    }
-	}
+      {
+        entry = &entries->entry[i];
+        if (entry->iface_type == iface_type)
+        {
+          /* this can happen in two cases:
+          * - our parent type already conformed to iface_type and node
+          *   got its own holder info. here, our children already have
+          *   entries and NULL vtables, since this will only work for
+          *   uninitialized classes.
+          * - an interface type is added to an ancestor after it was
+          *   added to a child type.
+          */
+          if (!parent_entry) {
+            g_assert (entry->vtable == NULL && entry->init_state == UNINITIALIZED);
+          } else {
+            /* sick, interface is added to ancestor *after* child type;
+            * nothing todo, the entry and our children were already setup correctly
+            */
+          }
+          return;
+        }
+      }
     }
 
   entries = _g_atomic_array_copy (CLASSED_NODE_IFACES_ENTRIES (node),
@@ -2632,7 +2632,7 @@ g_type_register_fundamental (GType                       type_id,
   if ((type_id & TYPE_ID_MASK) ||
       type_id > G_TYPE_FUNDAMENTAL_MAX)
     {
-      g_warning ("attempt to register fundamental type '%s' with invalid type id (%" G_GSIZE_FORMAT ")",
+      g_warning ("attempt to register fundamental type '%s' with invalid type id (%ld)",
 		 type_name,
 		 type_id);
       return 0;
@@ -4222,7 +4222,7 @@ g_type_value_table_peek (GType type)
     return vtable;
   
   if (!node)
-    g_warning (G_STRLOC ": type id '%" G_GSIZE_FORMAT "' is invalid", type);
+    g_warning (G_STRLOC ": type id '%ld' is invalid", type);
   if (!has_refed_data)
     g_warning ("can't peek value table for type '%s' which is not currently referenced",
 	       type_descriptive_name_I (type));
@@ -4603,10 +4603,11 @@ g_type_class_adjust_private_offset (gpointer  g_class,
    * then we consider this as a no-op, and just return the value. see the
    * comment in g_type_add_instance_private() for the full explanation.
    */
-  if (*private_size_or_offset > 0)
+  if (*private_size_or_offset > 0) {
     g_return_if_fail (*private_size_or_offset <= 0xffff);
-  else
+  } else {
     return;
+  }
 
   if (!node || !node->is_classed || !node->is_instantiatable || !node->data)
     {

@@ -309,7 +309,8 @@ g_hash_table_size (GHashTable *hash)
 gpointer
 g_hash_table_lookup (GHashTable *hash, gconstpointer key)
 {
-	gpointer orig_key, value;
+	gpointer orig_key;
+  gpointer value;
 	
 	if (g_hash_table_lookup_extended (hash, key, &orig_key, &value))
 		return value;
