@@ -696,14 +696,14 @@ type_descriptive_name_I (GType type)
 
 
 /* --- type consistency checks --- */
-static gboolean
+/* POSIXVALA LEAFI HACK: NO TYPE PLUGINS ALLOWED! */
+/*static gboolean
 check_plugin_U (GTypePlugin *plugin,
 		gboolean     need_complete_type_info,
 		gboolean     need_complete_interface_info,
 		const gchar *type_name)
 {
-  /* G_IS_TYPE_PLUGIN() and G_TYPE_PLUGIN_GET_CLASS() are external calls: _U 
-   */
+  // G_IS_TYPE_PLUGIN() and G_TYPE_PLUGIN_GET_CLASS() are external calls: _U 
   if (!plugin)
     {
       g_warning ("plugin handle for type '%s' is NULL",
@@ -729,7 +729,7 @@ check_plugin_U (GTypePlugin *plugin,
       return FALSE;
     }
   return TRUE;
-}
+}*/
 
 static gboolean
 check_type_name_I (const gchar *type_name)
@@ -1234,7 +1234,9 @@ type_data_ref_Wm (TypeNode *node)
       GTypeValueTable tmp_value_table;
       
       g_assert (node->plugin != NULL);
-      
+
+      printf("Posixvala Leafi hack: GObject does NOT support type plugins! Won't register.\n");
+     /* 
       if (pnode)
 	{
 	  type_data_ref_Wm (pnode);
@@ -1255,7 +1257,7 @@ type_data_ref_Wm (TypeNode *node)
       check_type_info_I (pnode, NODE_FUNDAMENTAL_TYPE (node), NODE_NAME (node), &tmp_info);
       type_data_make_W (node, &tmp_info,
 			check_value_table_I (NODE_NAME (node),
-					     &tmp_value_table) ? &tmp_value_table : NULL);
+					     &tmp_value_table) ? &tmp_value_table : NULL);*/
     }
   else
     {
@@ -1722,7 +1724,9 @@ type_iface_retrieve_holder_info_Wm (TypeNode *iface,
       GInterfaceInfo tmp_info;
       
       g_assert (iholder->plugin != NULL);
-      
+
+      printf("Posixvala Leafi hack: type_iface_retrieve_holder_info_Wm: GObject does not support type plugins!\n");
+     /* 
       type_data_ref_Wm (iface);
       if (iholder->info)
 	INVALID_RECURSION ("g_type_plugin_*", iface->plugin, NODE_NAME (iface));
@@ -1737,7 +1741,7 @@ type_iface_retrieve_holder_info_Wm (TypeNode *iface,
         INVALID_RECURSION ("g_type_plugin_*", iholder->plugin, NODE_NAME (iface));
       
       check_interface_info_I (iface, instance_type, &tmp_info);
-      iholder->info = g_memdup (&tmp_info, sizeof (tmp_info));
+      iholder->info = g_memdup (&tmp_info, sizeof (tmp_info));*/
     }
   
   return iholder;	/* we don't modify write lock upon returning NULL */
@@ -1756,6 +1760,8 @@ type_iface_blow_holder_info_Wm (TypeNode *iface,
   
   if (iholder->info && iholder->plugin)
     {
+      printf("Posixvala Leafi hack: type_iface_blow_holder_info_Wm: GObject doesn't support type plugins!\n");
+      /*
       g_free (iholder->info);
       iholder->info = NULL;
       
@@ -1763,6 +1769,7 @@ type_iface_blow_holder_info_Wm (TypeNode *iface,
       g_type_plugin_unuse (iholder->plugin);
       type_data_unref_U (iface, FALSE);
       G_WRITE_LOCK (&type_rw_lock);
+      */
     }
 }
 
@@ -2397,7 +2404,8 @@ type_data_last_unref_Wm (TypeNode *node,
       g_free (tdata);
       
       G_WRITE_UNLOCK (&type_rw_lock);
-      g_type_plugin_unuse (node->plugin);
+      printf("Posixvala Leafi hack: type_data_last_unref_Wm: Can't release GObject type plugins, because, er, we don't do type plugins.\n");
+      //g_type_plugin_unuse (node->plugin);
       if (ptype)
 	type_data_unref_U (lookup_type_node_I (ptype), FALSE);
       G_WRITE_LOCK (&type_rw_lock);
@@ -2790,7 +2798,7 @@ g_type_register_dynamic (GType        parent_type,
   
   if (!check_type_name_I (type_name) ||
       !check_derivation_I (parent_type, type_name) ||
-      !check_plugin_U (plugin, TRUE, FALSE, type_name))
+      FALSE) // !check_plugin_U (plugin, TRUE, FALSE, type_name))  // POSIXVALA LEAFI: NO TYPE PLUGINS
     return 0;
   
   G_WRITE_LOCK (&type_rw_lock);
@@ -2861,7 +2869,7 @@ g_type_add_interface_dynamic (GType        instance_type,
   g_return_if_fail (g_type_parent (interface_type) == G_TYPE_INTERFACE);
 
   node = lookup_type_node_I (instance_type);
-  if (!check_plugin_U (plugin, FALSE, TRUE, NODE_NAME (node)))
+  if (TRUE) // !check_plugin_U (plugin, FALSE, TRUE, NODE_NAME (node))) // POSIXVALA LEAFI: NO TYPE PLUGINS
     return;
 
   /* see comment in g_type_add_interface_static() about class_init_rec_mutex */
@@ -4369,7 +4377,8 @@ gobject_init_ctor (void)
 
   /* G_TYPE_TYPE_PLUGIN
    */
-  g_type_ensure (g_type_plugin_get_type ());
+  printf("Posixvala Leafi hack: GObject will not support type plugins. No type plugins will be registered.\n");
+  /*g_type_ensure (g_type_plugin_get_type ());*/
   
   /* G_TYPE_* value types
    */
