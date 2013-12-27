@@ -3,8 +3,7 @@ errordomain MyError {
 	HAS_FAILED
 }
 
-[Compact]
-public class Oops {
+public class Oops : GLib.Object {
 	public int counter;
 
 	public Oops() {

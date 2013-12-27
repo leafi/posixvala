@@ -8,7 +8,7 @@
 
 #include <stdarg.h>
 
-static inline guint g_str_hash(const gpointer v) {
+/*static inline guint g_str_hash(const gpointer v) {
 	const char *str = v;
 	guint hash = 5381;
 	gchar c;
@@ -17,7 +17,7 @@ static inline guint g_str_hash(const gpointer v) {
 		hash = ((hash << 5) + hash) + c;
 
 	return hash;
-}
+}*/
 
 static inline char *g_strdup_printf(const char *fmt, ...) {
 	unsigned int length;

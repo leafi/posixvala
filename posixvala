@@ -12,7 +12,7 @@ HAS_LC=0
 SAVETEMPS=0
 [ -z "${VALAC}" ] && VALAC=valac
 [ -z "${CC}" ] && CC=gcc
-CFILES=""
+CFILES="include/gatomic.c include/gmem.c include/gdataset.c include/gobject/gparam.c include/ghashtable.c include/gquark.c include/gobject/gatomicarray.c include/gobject/gvalue.c include/gobject/gtype.c"
 VALA_ARGS="" #--save-temps"
 help() {
 	echo "Usage: posixvala [-cChkv] [valaflags] [(vala|genie)files ...]"
@@ -45,11 +45,14 @@ R=$?; [ ! $R = 0 ] && exit $R
 if [ "${HAS_C}" = 0 ]; then
 	CFLAGS="${CFLAGS} -Wall -I${POSIXVALADIR} -O3"
 	if [ "${HAS_LC}" = 0 ]; then
+		echo "${CC} -o ${MAIN} ${CFLAGS} ${CFILES}"
 		${CC} -o ${MAIN} ${CFLAGS} ${CFILES}
 	else
+		echo "${CC} -c ${CFLAGS} ${CFILES}"
 		${CC} -c ${CFLAGS} ${CFILES}
 	fi
 	R=$?; [ ! $R = 0 ] && exit $R
-	[ "${SAVETEMPS}" = 0 ] && rm -f ${CFILES}
+  # FOR GOD'S SAKES: *DO NOT* REMOVE CFILES!!!!!!!!!!!
+	# [ "${SAVETEMPS}" = 0 ] && rm -f ${CFILES}
 fi
 exit 0
