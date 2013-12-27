@@ -36,6 +36,8 @@
 
 #include "gconstructor.h"
 
+#define G_N_ELEMENTS(arr)		(sizeof (arr) / sizeof ((arr)[0]))
+
 
 /**
  * SECTION:gtype
@@ -1840,20 +1842,20 @@ g_type_create_instance (GType type)
   private_size = node->data->instance.private_size;
   ivar_size = node->data->instance.instance_size;
 
-  if (private_size && RUNNING_ON_VALGRIND)
+  /*if (private_size && RUNNING_ON_VALGRIND)
     {
       private_size += ALIGN_STRUCT (1);
 
-      /* Allocate one extra pointer size... */
+      // Allocate one extra pointer size...
       allocated = g_slice_alloc0 (private_size + ivar_size + sizeof (gpointer));
-      /* ... and point it back to the start of the private data. */
+      // ... and point it back to the start of the private data.
       *(gpointer *) (allocated + private_size + ivar_size) = allocated + ALIGN_STRUCT (1);
 
-      /* Tell valgrind that it should treat the object itself as such */
+      // Tell valgrind that it should treat the object itself as such
       VALGRIND_MALLOCLIKE_BLOCK (allocated + private_size, ivar_size + sizeof (gpointer), 0, TRUE);
       VALGRIND_MALLOCLIKE_BLOCK (allocated + ALIGN_STRUCT (1), private_size - ALIGN_STRUCT (1), 0, TRUE);
     }
-  else
+  else*/
     allocated = g_slice_alloc0 (private_size + ivar_size);
 
   instance = (GTypeInstance *) (allocated + private_size);
@@ -1928,20 +1930,20 @@ g_type_free_instance (GTypeInstance *instance)
   /* See comment in g_type_create_instance() about what's going on here.
    * We're basically unwinding what we put into motion there.
    */
-  if (private_size && RUNNING_ON_VALGRIND)
+  /*if (private_size && RUNNING_ON_VALGRIND)
     {
       private_size += ALIGN_STRUCT (1);
       allocated -= ALIGN_STRUCT (1);
 
-      /* Clear out the extra pointer... */
+      // Clear out the extra pointer...
       *(gpointer *) (allocated + private_size + ivar_size) = NULL;
-      /* ... and ensure we include it in the size we free. */
+      // ... and ensure we include it in the size we free.
       g_slice_free1 (private_size + ivar_size + sizeof (gpointer), allocated);
 
       VALGRIND_FREELIKE_BLOCK (allocated + ALIGN_STRUCT (1), 0);
       VALGRIND_FREELIKE_BLOCK (instance, 0);
     }
-  else
+  else*/
     g_slice_free1 (private_size + ivar_size, allocated);
 
   g_type_class_unref (class);
@@ -4334,8 +4336,9 @@ gobject_init_ctor (void)
   G_WRITE_LOCK (&type_rw_lock);
 
   /* setup GObject library wide debugging flags */
-  env_string = g_getenv ("GOBJECT_DEBUG");
-  if (env_string != NULL)
+  //env_string = g_getenv ("GOBJECT_DEBUG");
+  env_string = NULL;
+  /*if (env_string != NULL)
     {
       GDebugKey debug_keys[] = {
         { "objects", G_TYPE_DEBUG_OBJECTS },
@@ -4343,7 +4346,7 @@ gobject_init_ctor (void)
       };
 
       _g_type_debug_flags = g_parse_debug_string (env_string, debug_keys, G_N_ELEMENTS (debug_keys));
-    }
+    }*/
   
   /* quarks */
   static_quark_type_flags = g_quark_from_static_string ("-g-type-private--GTypeFlags");
@@ -4373,7 +4376,8 @@ gobject_init_ctor (void)
   
   G_WRITE_UNLOCK (&type_rw_lock);
   
-  _g_value_c_init ();
+  int TODO_init_c_types_for_gobject = 0;
+  //_g_value_c_init ();
 
   /* G_TYPE_TYPE_PLUGIN
    */
@@ -4382,35 +4386,43 @@ gobject_init_ctor (void)
   
   /* G_TYPE_* value types
    */
-  _g_value_types_init ();
+  int TODO_init_value_types_for_gobject = 0;
+  //_g_value_types_init ();
   
   /* G_TYPE_ENUM & G_TYPE_FLAGS
    */
-  _g_enum_types_init ();
+  int TODO_init_enum_types_for_gobject = 0;
+  //_g_enum_types_init ();
   
   /* G_TYPE_BOXED
    */
-  _g_boxed_type_init ();
+  int TODO_init_boxed_types_for_gobject = 0;
+  //_g_boxed_type_init ();
   
   /* G_TYPE_PARAM
    */
-  _g_param_type_init ();
+  int TODO_init_param_types_for_gobject = 0;
+  //_g_param_type_init ();
   
   /* G_TYPE_OBJECT
    */
-  _g_object_type_init ();
+  int TODO_init_object_types_for_gobject = 0;
+  //_g_object_type_init ();
   
   /* G_TYPE_PARAM_* pspec types
    */
-  _g_param_spec_types_init ();
+  int TODO_init_param_spec_types_for_gobject = 0;
+  //_g_param_spec_types_init ();
   
   /* Value Transformations
    */
-  _g_value_transforms_init ();
+  int TODO_init_value_transforms_for_gobject = 0;
+  //_g_value_transforms_init ();
   
   /* Signal system
    */
-  _g_signal_init ();
+  int TODO_init_signals_for_gobject = 0;
+  //_g_signal_init ();
 }
 
 /**
