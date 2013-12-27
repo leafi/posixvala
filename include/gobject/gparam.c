@@ -26,7 +26,7 @@
 #include <string.h>
 
 #include "gparam.h"
-#include "gparamspecs.h"
+//#include "gparamspecs.h"
 #include "gvaluecollector.h"
 //#include "gtype-private.h"
 

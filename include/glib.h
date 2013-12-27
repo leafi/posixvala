@@ -30,6 +30,14 @@ G_BEGIN_DECLS
 #define GLIB_AVAILABLE_IN_2_34
 #define GLIB_AVAILABLE_IN_2_36
 
+#define ABS(a)	   (((a) < 0) ? -(a) : (a))
+#define MIN(a, b)  (((a) < (b)) ? (a) : (b))
+#define MAX(a, b)  (((a) > (b)) ? (a) : (b))
+#define CLAMP(x, low, high)  (((x) > (high)) ? (high) : (((x) < (low)) ? (low) : (x)))
+
+#define G_STMT_START  do
+#define G_STMT_END    while (0)
+
 // we have no DTrace. Remove the trace.
 #define TRACE(probe)
 

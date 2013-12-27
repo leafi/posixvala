@@ -29,6 +29,9 @@
 #include <math.h>
 #include <glib.h>
 
+#define G_N_ELEMENTS(arr)		(sizeof (arr) / sizeof ((arr)[0]))
+#define G_MAXINT32 2147483647
+
 typedef struct _Slot Slot;
 
 struct _Slot {
