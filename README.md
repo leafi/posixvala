@@ -1,6 +1,8 @@
 posixvala
 =========
 
+## Note: I'm not actually confident this works, at all, even slightly. It was a nice exercise though.
+
 This fork of the project is posixvala, but with bits of GObject and 
 Mono's eGLib (and even real GLib) hacked in.  
 Normal posixvala is wonderful and supports classes with [Compact] on 
